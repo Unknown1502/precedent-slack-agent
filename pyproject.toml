@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "precedent"
+version = "0.0.0"
+description = "Precedent — institutional memory, enforced. A Slack-native decision-canon agent."
+requires-python = ">=3.11"
+dependencies = [
+  "slack-bolt>=1.21",
+  "SQLAlchemy>=2.0,<3",
+  "pgvector>=0.3",
+  "psycopg[binary]>=3.2",
+  "python-dotenv>=1.0",
+  "structlog>=24.1",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.3",
+  "groq",
+  "anthropic",
+  "voyageai",
+]
+
+[project.optional-dependencies]
+# Phase 6 (MCP server) — mcp SDK pinned <2.0: v2 is pre-release until after our deadline.
+mcp = ["mcp<2.0", "uvicorn>=0.30", "starlette>=0.37"]
+# Slack CLI project hooks — lets `slack install` / `slack run` read manifest.json.
+cli = ["slack-cli-hooks>=0.3"]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+precedent-slack = "precedent.slack.app:main"
+precedent-migrate = "precedent.db.migrate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

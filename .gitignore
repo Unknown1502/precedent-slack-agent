@@ -1,0 +1,25 @@
+# --- secrets ---
+.env
+.env.*
+!.env.example
+
+# --- python ---
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# --- os / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- runtime artifacts ---
+scripts/seed/seed-output.json
+*.log

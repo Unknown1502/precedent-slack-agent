@@ -1,0 +1,68 @@
+# Precedent — Slack app manifest.
+# Create the app at https://api.slack.com/apps -> "From an app manifest", paste this, then:
+#   1. Enable Socket Mode -> generate an App-Level Token (scope: connections:write) => SLACK_APP_TOKEN (xapp-…)
+#   2. Install to workspace => Bot User OAuth Token => SLACK_BOT_TOKEN (xoxb-…)
+#   3. Basic Information => Signing Secret => SLACK_SIGNING_SECRET
+#   4. <!-- VERIFY --> Turn ON "Agents & AI Apps" in the app's left-nav (required for assistant
+#      split-view + RTS action_token delivery). The exact manifest key for this toggle is not
+#      confirmed here, so enable it in the UI rather than trusting a guessed manifest field.
+
+display_information:
+  name: Precedent
+  description: Institutional memory, enforced. Capture, defend, and govern team decisions.
+  background_color: "#1d1d1f"
+
+features:
+  bot_user:
+    display_name: precedent
+    always_online: true
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  slash_commands:
+    - command: /precedent
+      description: Capture, query, and govern team decisions
+      usage_hint: help | log | backfill
+      should_escape: false
+
+oauth_config:
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - channels:read       # required by member_joined_channel event
+      - groups:history
+      - groups:read         # required by member_joined_channel event
+      - im:history
+      - mpim:history
+      - mpim:read           # required by member_joined_channel event
+      - chat:write
+      - chat:write.customize
+      - reactions:read
+      - reactions:write
+      - commands
+      - users:read
+      - canvases:read
+      - canvases:write
+      - assistant:write
+      - search:read.public
+      # - search:read.private   # add only if the AI-Search sandbox grants it
+
+settings:
+  event_subscriptions:
+    bot_events:
+      - message.channels
+      - message.groups
+      - message.im
+      - message.mpim
+      - app_mention
+      - reaction_added
+      - assistant_thread_started
+      - assistant_thread_context_changed
+      - app_home_opened
+      - member_joined_channel
+  interactivity:
+    is_enabled: true
+  socket_mode_enabled: true
+  org_deploy_enabled: false

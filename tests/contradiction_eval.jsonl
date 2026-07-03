@@ -1,0 +1,30 @@
+{"claim": "for the notifications service let's just spin up MongoDB, faster for this shape of data", "expected": "PRE-014", "note": "L1 zero-overlap"}
+{"claim": "the new billing microservice will run on DynamoDB", "expected": "PRE-014", "note": "zero-overlap datastore"}
+{"claim": "I'll add a 15% off banner for students on the landing page this week", "expected": "PRE-011", "note": "L2 discount tier"}
+{"claim": "let's give annual subscribers an extra 10% loyalty rate starting Monday", "expected": "PRE-011", "note": "zero-overlap discount"}
+{"claim": "pushing the billing retry fix straight to prod tonight, it's tiny", "expected": "PRE-013", "note": "L3 no feature flag"}
+{"claim": "just hardcoded the invoice tax logic change, shipping now", "expected": "PRE-013", "note": "zero-overlap billing change"}
+{"claim": "let's book a design sync Wednesday 3pm", "expected": "PRE-016", "note": "L4"}
+{"claim": "can everyone hop on a call this Wed afternoon?", "expected": "PRE-016", "note": "zero-overlap meeting"}
+{"claim": "we can just pipe EU events into the US cluster for now", "expected": "PRE-017", "note": "L5"}
+{"claim": "storing European customer analytics in our Virginia datacenter is fine temporarily", "expected": "PRE-017", "note": "zero-overlap residency"}
+{"claim": "launching the onboarding A/B today, will post results Friday", "expected": "PRE-021", "note": "L6"}
+{"claim": "quietly rolling out the new signup flow experiment to 50% of users", "expected": "PRE-021", "note": "zero-overlap experiment"}
+{"claim": "good morning team, coffee first then standup", "expected": null, "note": "chitchat"}
+{"claim": "who's presenting at the all-hands next week?", "expected": null, "note": "question"}
+{"claim": "the coffee machine on floor 3 is broken again", "expected": null, "note": "unrelated"}
+{"claim": "great work on the launch everyone!", "expected": null, "note": "praise"}
+{"claim": "can someone review my PR when they get a chance?", "expected": null, "note": "unrelated"}
+{"claim": "lunch options today: tacos or sushi?", "expected": null, "note": "unrelated"}
+{"claim": "reminder: submit your timesheets by end of day", "expected": null, "note": "unrelated"}
+{"claim": "the office wifi is down in the east wing", "expected": null, "note": "unrelated"}
+{"claim": "happy birthday Sana!", "expected": null, "note": "unrelated"}
+{"claim": "anyone have the link to the retro board?", "expected": null, "note": "unrelated"}
+{"claim": "using Postgres for the new notifications service", "expected": null, "note": "compliant near-miss PRE-014"}
+{"claim": "I put the billing change behind a feature flag before deploying", "expected": null, "note": "compliant PRE-013"}
+{"claim": "registered the new A/B test in #growth, launching tomorrow", "expected": null, "note": "compliant PRE-021"}
+{"claim": "no meetings today since it's Wednesday, async updates only", "expected": null, "note": "compliant PRE-016"}
+{"claim": "keeping EU analytics data in the Frankfurt region as required", "expected": null, "note": "compliant PRE-017"}
+{"claim": "what if we hypothetically used Mongo for a weekend side project?", "expected": null, "note": "hypothetical, not a contradiction"}
+{"claim": "should we consider a student discount at some point?", "expected": null, "note": "question, not assertion"}
+{"claim": "the pricing page copy looks great, nice work", "expected": null, "note": "unrelated praise"}

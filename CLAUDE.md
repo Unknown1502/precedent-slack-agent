@@ -63,14 +63,18 @@ Dev runs on **Groq** (LLM: `llama-3.3-70b-versatile` reason / `llama-3.1-8b-inst
 ⚠️ Voyage free tier is 3 RPM without a payment method — batch embeds; add a (free) card before judging.
 
 ## Phases — all built & verified against real services (Groq/Voyage/Postgres/live MCP client)
-- P0 scaffold · P1 manual capture (**live**: PRE-001 ratified+embedded) · P2 Gatekeeper (real Groq 4/4, <1.5s)
-- P3 Sentinel — **eval 30/30**, drift card + supersede · P4 Archivist (streamed cited answer) + RTS client
-- P5 Registrar — Canvas Register (live), App Home dashboard, digest · P6 MCP (4 tools, **live client**, /healthz, 401)
-- P7 seed — 12 rulings, **landmines fire** (L1→PRE-014 etc.), PRE-006→PRE-014 lineage · P8 hardening + tests
-- **Remaining = live UI walkthrough** (autonomous card, drift card, assistant thread, Claude Desktop MCP) + deploy.
+- P0 scaffold · P1 manual capture (**live**: reaction→card→ratify→embedded, verified with real thread)
+- P2 Gatekeeper (real Groq 4/4, <1.5s) · P3 Sentinel — **eval 30/30**, drift card + supersede
+- P4 Archivist (streamed cited answer, real Groq) + RTS client (verified surface; live action_token pending)
+- P5 Registrar — Canvas Register (live create+edit), App Home dashboard (live counts+pending+drift), digest
+- P6 MCP — 4 tools verified via a **real MCP client** (official SDK) incl. full propose→ratify round-trip
+- P7 seed — 12 rulings live in DB (correct PRE-006→PRE-014 lineage); all 6 landmines logically correct
+  (each fires correctly in isolation; back-to-back reliability gated on Voyage rate limit, see below)
+- P8 hardening — retry-with-backoff on embeddings; pytest 5/5; test-data cleanup from demo canon
+- **Remaining:** confirm Voyage payment method lifts the RPM cap (re-test 6/6 burst) · live Slack UI
+  walkthrough of autonomous capture + drift card firing from a human typing · Claude Desktop MCP config
+  (vs. the raw SDK client already used to verify) · eventual deploy (Railway/Fly, out of local-dev scope).
 
 ## Run
 `python -m precedent.db.migrate` · `python -m precedent.slack.app` (Socket Mode) · `python -m precedent.mcp.server` (:8933)
 Seed: `python scripts/seed/insert_canon.py` · Eval: `python tests/eval_runner.py` · `pytest tests/test_smoke.py`
-```
-

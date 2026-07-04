@@ -4,6 +4,10 @@ Isolated under team_id='eval' so it never touches live data; fixtures are cleane
 Embeddings are batched (2 Voyage calls total) to respect the free-tier 3 RPM limit.
 Usage:  python tests/eval_runner.py
 Pass bar: 12/12 conflicts caught AND 0/18 false fires.
+
+NOTE: fixture ids use an EV-* namespace, NOT PRE-* — `decisions.id` is a single global
+primary key (not scoped per team_id), so reusing the real seeded canon's PRE-* ids here
+would collide with scripts/seed/insert_canon.py's live rulings once that seed has run.
 """
 from __future__ import annotations
 
@@ -20,17 +24,17 @@ from precedent.services.embeddings import embed_batch
 EVAL_TEAM = "eval"
 
 FIXTURES = [
-    ("PRE-003", "Pricing page owns discount copy", "The pricing page owns all discount copy.", "product"),
-    ("PRE-011", "No new discount tiers", "No new discount tiers or promotional pricing until the Q4 pricing review.", "growth"),
-    ("PRE-012", "Errors go through copy review", "All customer-facing error messages go through copy review before shipping.", "product"),
-    ("PRE-013", "Billing changes need feature flags", "Any backend change touching billing must be behind a feature flag.", "engineering"),
-    ("PRE-014", "Postgres for new services", "All new services use Postgres.", "engineering"),
-    ("PRE-015", "Design tokens only", "Components use design tokens only; no raw hex values.", "design"),
-    ("PRE-016", "No meetings Wednesdays", "No meetings are scheduled on Wednesdays.", "ops"),
-    ("PRE-017", "EU data residency", "All EU analytics data must stay in EU data-residency regions.", "engineering"),
-    ("PRE-018", "Changelog per release", "Every release requires a changelog entry.", "ops"),
-    ("PRE-020", "Support SLA 4h", "Support first-response SLA is 4 hours.", "ops"),
-    ("PRE-021", "Register A/B tests", "All A/B tests must be registered in #growth before launch.", "growth"),
+    ("EV-003", "Pricing page owns discount copy", "The pricing page owns all discount copy.", "product"),
+    ("EV-011", "No new discount tiers", "No new discount tiers or promotional pricing until the Q4 pricing review.", "growth"),
+    ("EV-012", "Errors go through copy review", "All customer-facing error messages go through copy review before shipping.", "product"),
+    ("EV-013", "Billing changes need feature flags", "Any backend change touching billing must be behind a feature flag.", "engineering"),
+    ("EV-014", "Postgres for new services", "All new services use Postgres.", "engineering"),
+    ("EV-015", "Design tokens only", "Components use design tokens only; no raw hex values.", "design"),
+    ("EV-016", "No meetings Wednesdays", "No meetings are scheduled on Wednesdays.", "ops"),
+    ("EV-017", "EU data residency", "All EU analytics data must stay in EU data-residency regions.", "engineering"),
+    ("EV-018", "Changelog per release", "Every release requires a changelog entry.", "ops"),
+    ("EV-020", "Support SLA 4h", "Support first-response SLA is 4 hours.", "ops"),
+    ("EV-021", "Register A/B tests", "All A/B tests must be registered in #growth before launch.", "growth"),
 ]
 
 

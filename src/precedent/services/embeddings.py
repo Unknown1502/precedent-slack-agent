@@ -35,7 +35,9 @@ def _voyage(texts: list[str]) -> list[list[float]]:
     import voyageai
 
     settings.require("voyage_api_key")
-    client = voyageai.Client(api_key=settings.voyage_api_key)
+    # Free tier (no payment method) is capped at 3 RPM — retry-with-backoff turns a
+    # rate limit into "slightly slower" instead of "silently no drift card" (demo risk).
+    client = voyageai.Client(api_key=settings.voyage_api_key, max_retries=5, timeout=30)
     result = client.embed(texts, model=settings.embed_model, input_type="document")
     return [list(v) for v in result.embeddings]
 

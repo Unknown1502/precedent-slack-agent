@@ -112,3 +112,31 @@ def register(app: App) -> None:
         if event.get("user") and event.get("user") == context.get("bot_user_id"):
             canon.set_enrollment(event["channel"], "observe")
             log.info("channel.auto_enrolled", channel=event["channel"])
+
+    @app.event("app_mention")
+    def on_mention(event, client, say):
+        new_correlation_id()
+        # app_mention is the only surface that can carry a fresh RTS action_token (G1) —
+        # log the truth about what this workspace actually delivers.
+        action_token = event.get("action_token")
+        log.info("mention.received", has_action_token=bool(action_token),
+                 event_keys=sorted(event.keys()))
+        text = (event.get("text") or "").lower()
+        if "backfill" in text:
+            from precedent.slack.backfill import run as run_backfill
+
+            say(text=":pick: Mining history for un-captured decisions…",
+                thread_ts=event.get("thread_ts") or event["ts"])
+            result = run_backfill(client, event["channel"], action_token)
+            summary = (f":scales: Proposed {len(result['proposed'])} ruling(s): "
+                       f"{', '.join(result['proposed'])}"
+                       if result["proposed"] else
+                       f"No new decision threads found ({result['scanned_threads']} scanned).")
+            note = result["rts_note"] or f"semantic search used ({result['rts_used']} calls)"
+            say(text=f"{summary}\n_RTS: {note}_",
+                thread_ts=event.get("thread_ts") or event["ts"])
+        else:
+            say(text="Hi! I capture decisions (react :scales: on a thread), defend the canon "
+                     "against drift, and answer questions in my split-view. Try "
+                     "`@precedent backfill` to mine this channel's history.",
+                thread_ts=event.get("thread_ts") or event["ts"])

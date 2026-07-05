@@ -10,7 +10,10 @@ from precedent.telemetry import get_logger
 log = get_logger("extractor")
 
 _name_cache: dict[str, str] = {}
-_SKIP_SUBTYPES = {"channel_join", "channel_leave", "bot_message"}
+# Extraction runs only on explicit human intent (reaction / /log / backfill), so we INCLUDE
+# bot-authored messages here — seeded personas are bot_message (G10). The Gatekeeper hot path
+# filters bot messages separately (G4); that protection does not belong at the extraction layer.
+_SKIP_SUBTYPES = {"channel_join", "channel_leave"}
 
 
 def _display_name(client, user_id: str | None) -> str:
@@ -42,7 +45,7 @@ def fetch_thread(client, channel: str, ts: str) -> tuple[str, list[dict]]:
             permalink = None
         out.append(
             {
-                "author": _display_name(client, m.get("user")) if m.get("user") else m.get("username", "unknown"),
+                "author": m.get("username") or (_display_name(client, m.get("user")) if m.get("user") else "unknown"),
                 "text": m.get("text", ""),
                 "permalink": permalink,
             }

@@ -71,9 +71,13 @@ Dev runs on **Groq** (LLM: `llama-3.3-70b-versatile` reason / `llama-3.1-8b-inst
 - P7 seed — 12 rulings live in DB (correct PRE-006→PRE-014 lineage); all 6 landmines logically correct
   (each fires correctly in isolation; back-to-back reliability gated on Voyage rate limit, see below)
 - P8 hardening — retry-with-backoff on embeddings; pytest 5/5; test-data cleanup from demo canon
-- **Remaining:** confirm Voyage payment method lifts the RPM cap (re-test 6/6 burst) · live Slack UI
-  walkthrough of autonomous capture + drift card firing from a human typing · Claude Desktop MCP config
-  (vs. the raw SDK client already used to verify) · eventual deploy (Railway/Fly, out of local-dev scope).
+- **Closed since:** Voyage cap lifted (6/6 landmine burst in 7.3s) · drift card fired live from a human
+  message (~4.5s) · Claude Desktop wired via `cmd /c npx mcp-remote` (full propose→ratify loop demoed) ·
+  seed world arcs posted with real evidence permalinks (27 msgs, 7 personas, `scripts/seed/seed_world.py`)
+  · F7 backfill built (`/precedent backfill` + `@precedent backfill`; extractor now includes bot_message
+  personas — G4 filtering stays in the Gatekeeper only).
+- **Remaining (non-code):** deploy (Railway/Fly + Neon) · 3-min video · architecture diagram · Devpost
+  writeup · judge invites · RTS action_token live truth (needs one `@precedent` mention; degrades clean).
 
 ## Run
 `python -m precedent.db.migrate` · `python -m precedent.slack.app` (Socket Mode) · `python -m precedent.mcp.server` (:8933)

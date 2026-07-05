@@ -55,9 +55,9 @@ and drift defense there.
 | 3 | Sentinel: real-time drift defense (local pgvector only) + supersede flow | done — 30/30 eval |
 | 4 | Archivist: assistant split-view Q&A, streamed, canon + optional RTS evidence | done |
 | 5 | Registrar: Canvas Decision Register, App Home dashboard, digest | done |
-| 6 | MCP server: 4 tools over Streamable HTTP, bearer auth, `/healthz` | done |
-| 7 | Seed world: 12 rulings, 6 drift landmines | done |
-| 8 | Hardening: retries, idempotency, tests | in progress |
+| 6 | MCP server: 4 tools over Streamable HTTP, bearer auth, `/healthz` — verified from Claude Desktop | done |
+| 7 | Seed world: 12 rulings + persona story arcs with real evidence permalinks; `/precedent backfill` + `@precedent backfill` archaeology (history scan, RTS-assisted when a token is present) | done |
+| 8 | Hardening: retries, idempotency, tests | done |
 
 ## Tests
 

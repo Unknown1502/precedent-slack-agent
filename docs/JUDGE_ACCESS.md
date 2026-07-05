@@ -6,9 +6,14 @@ AI agents consult it before acting.
 
 ## Workspace
 - Sandbox: **Lumina Labs** (invite link provided in the Devpost submission).
-- The bot **@precedent** is installed. Observed channel for the demo: **#all-lumina-labs**
-  (run `/precedent enroll` in any channel to have Precedent watch it).
-- Canon is pre-seeded with **12 rulings** (PRE-003 … PRE-021), incl. lineage **PRE-006 → PRE-014**.
+- The bot **@precedent** is installed and observing: **#all-lumina-labs, #eng-platform, #pricing,
+  #growth, #decisions** (run `/precedent enroll` in any channel to add more).
+- Canon is pre-seeded with **12 rulings** (PRE-003 … PRE-021), incl. lineage **PRE-006 → PRE-014** —
+  and every ruling's evidence links to **real seeded conversations** (see `docs/WORLD.md`): click
+  any evidence link on a decision card and you land in the actual debate, e.g. the #eng-platform
+  Postgres thread where Devon's managed-Mongo dissent was recorded.
+- Bonus: try `@precedent backfill` in #growth — it mines the channel's history for un-captured
+  decisions and proposes Ratify cards (archaeology-lite; RTS-assisted when available).
 
 ## 60-second tour
 1. Open **#all-lumina-labs** and type a landmine (below) → an ephemeral **⚖️ drift card** appears

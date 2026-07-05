@@ -68,6 +68,16 @@ def register(app: App) -> None:
             )
             respond(text="Posted the weekly digest to this channel. :scales:")
         elif sub == "backfill":
-            respond(text="`/precedent backfill` proposes rulings from history. _(Wired in Phase 7.)_")
+            from precedent.slack.backfill import run as run_backfill
+
+            respond(text=":pick: Mining this channel's history for un-captured decisions…")
+            result = run_backfill(client, command["channel_id"], action_token=None)
+            if result["proposed"]:
+                respond(text=f":scales: Proposed {len(result['proposed'])} ruling(s): "
+                        f"{', '.join(result['proposed'])} — ratify cards posted in their threads. "
+                        f"_(RTS: {result['rts_note']})_")
+            else:
+                respond(text="No new decision threads found in recent history. "
+                        f"_(scanned {result['scanned_threads']} threads · RTS: {result['rts_note']})_")
         else:
             respond(text=f"Unknown subcommand `{sub}`. Try `/precedent help`.")

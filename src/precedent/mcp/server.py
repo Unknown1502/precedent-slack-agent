@@ -7,7 +7,10 @@ Run:  python -m precedent.mcp.server
 """
 from __future__ import annotations
 
+import os
+
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from precedent.agents.sentinel import check_claim
 from precedent.config import settings
@@ -16,10 +19,22 @@ from precedent.telemetry import configure_logging, get_logger
 
 log = get_logger("mcp")
 
+# Behind a platform proxy (Railway/Render/Fly) the inbound Host header is the public domain, which
+# the SDK's DNS-rebinding protection rejects with 421 unless allow-listed. Our real access control is
+# the bearer token (BearerAuthMiddleware -> 401), so default protection OFF (works on any host); set
+# MCP_ALLOWED_HOSTS="host1,host2" to re-enable a strict allow-list.
+_allowed = [h.strip() for h in os.environ.get("MCP_ALLOWED_HOSTS", "").split(",") if h.strip()]
+_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=bool(_allowed),
+    allowed_hosts=_allowed,
+    allowed_origins=_allowed,
+)
+
 mcp = FastMCP(
     "precedent",
     instructions="Consult the organization's ratified decision canon before acting. "
     "Use check_conflict before proposing plans; propose_decision routes to human ratification in Slack.",
+    transport_security=_security,
 )
 
 

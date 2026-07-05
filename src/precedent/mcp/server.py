@@ -99,11 +99,17 @@ def main() -> None:
     async def _healthz(_request):
         return JSONResponse({"status": "ok", "service": "precedent-mcp"})
 
+    import os
+
+    # Railway/Render/Fly inject $PORT; prefer it so the service "just works" on deploy,
+    # falling back to MCP_PORT (8933) for local runs.
+    port = int(os.environ.get("PORT") or settings.mcp_port)
+
     app = mcp.streamable_http_app()
     app.router.routes.append(Route("/healthz", _healthz))
     app.add_middleware(BearerAuthMiddleware, token=settings.mcp_bearer_token)
-    log.info("mcp.boot", port=settings.mcp_port, auth=bool(settings.mcp_bearer_token))
-    uvicorn.run(app, host="0.0.0.0", port=settings.mcp_port, log_level="warning")
+    log.info("mcp.boot", port=port, auth=bool(settings.mcp_bearer_token))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
 
 
 if __name__ == "__main__":

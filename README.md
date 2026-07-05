@@ -7,6 +7,72 @@ decisions**, defends that canon in real time against drift with private nudges, 
 Three pillars: **Remember** (manual + autonomous capture → human-ratified canon) · **Defend**
 (real-time drift detection, local-only) · **Govern** (MCP server with a propose → human-ratify loop).
 
+## Architecture
+
+Two invariants hold everywhere: **(1)** nothing enters the canon as `ratified` without a human
+clicking **Approve**, and **(2)** the drift hot path uses **local pgvector only — never the
+Real-Time Search API**. The Slack surfaces and the MCP server call the *same* `canon` + `sentinel`
+code — one brain, two mouths.
+
+```mermaid
+flowchart TD
+    subgraph SLACK["Slack workspace"]
+        MSG["Channel message"]
+        REACT["scales reaction · /precedent"]
+        SPLIT["Assistant split-view Q and A"]
+        SURF["App Home + Canvas Register"]
+    end
+
+    subgraph WORKER["Bolt for Python · Socket Mode worker · Railway"]
+        GATE{{"Gatekeeper<br/>llama-3.1-8b · every message<br/>decision_moment · assertive_claim · neither"}}
+        EXTRACT["Extractor<br/>thread → Decision Object"]
+        SENTINEL["Sentinel — drift defense<br/>embed → pgvector top-k → LLM judge"]
+        ARCHIVIST["Archivist<br/>streamed, cited answer"]
+        REGISTRAR["Registrar<br/>Canvas · App Home · digest"]
+    end
+
+    CANON[("Canon — Neon Postgres + pgvector<br/>decisions · lineage · drift_events · enrollment")]
+    VOYAGE["Voyage voyage-3.5<br/>embeddings 1024-dim"]
+    GROQ["Groq LLMs"]
+
+    subgraph MCPBOX["MCP server · Streamable HTTP + bearer · Railway"]
+        MCPTOOLS["search_decisions · get_decision<br/>check_conflict · propose_decision"]
+    end
+    AGENT["Claude Desktop / any MCP client"]
+    HUMAN{{"Human Approve<br/>— nothing is ratified without this —"}}
+
+    MSG --> GATE
+    GATE -->|decision_moment| EXTRACT
+    GATE -->|assertive_claim| SENTINEL
+    REACT --> EXTRACT
+    SPLIT --> ARCHIVIST
+
+    EXTRACT -->|Ratify card| HUMAN
+    SENTINEL -->|ephemeral drift card| MSG
+    SENTINEL -->|Propose supersede| HUMAN
+    HUMAN -->|ratify / supersede + embed| CANON
+    ARCHIVIST --> SPLIT
+    REGISTRAR --> SURF
+
+    EXTRACT --> CANON
+    SENTINEL --> CANON
+    ARCHIVIST --> CANON
+    REGISTRAR --> CANON
+    SENTINEL -->|claim embedding| VOYAGE
+    VOYAGE --> CANON
+    ARCHIVIST -.->|RTS ≤3 · questions only| SLACK
+
+    GATE -.-> GROQ
+    EXTRACT -.-> GROQ
+    SENTINEL -.-> GROQ
+    ARCHIVIST -.-> GROQ
+
+    AGENT <-->|MCP| MCPTOOLS
+    MCPTOOLS --> CANON
+    MCPTOOLS -->|check_conflict| SENTINEL
+    MCPTOOLS -->|propose_decision| HUMAN
+```
+
 ## Setup (≈5 minutes after prerequisites)
 
 Prerequisites: Python 3.11+, Docker (for local Postgres+pgvector), a Slack app (Socket Mode), a

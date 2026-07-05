@@ -39,9 +39,12 @@ Type any of these in **#all-lumina-labs** (as a human — bot messages are ignor
 | L6 | `launching the onboarding A/B today, will post results Friday` | PRE-021 |
 
 ## MCP quickstart (governance loop)
-The Precedent MCP server exposes 4 tools over Streamable HTTP: `search_decisions`, `get_decision`,
-`check_conflict`, `propose_decision`. Add to Claude Desktop's `claude_desktop_config.json`:
+The Precedent MCP server is **live** over Streamable HTTP with 4 tools: `search_decisions`,
+`get_decision`, `check_conflict`, `propose_decision`. Public URL:
 
+    https://daring-rejoicing-production-01d2.up.railway.app/mcp
+
+Add to Claude Desktop's `claude_desktop_config.json` (macOS/Linux — bare `npx`):
 ```json
 {
   "mcpServers": {
@@ -49,20 +52,23 @@ The Precedent MCP server exposes 4 tools over Streamable HTTP: `search_decisions
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://<deployed-host>/mcp",
+        "https://daring-rejoicing-production-01d2.up.railway.app/mcp",
         "--header",
-        "Authorization: Bearer <MCP_BEARER_TOKEN>"
+        "Authorization: Bearer prod-mcp-fc4649b9f0b0aabe2ddb21aadd165998"
       ]
     }
   }
 }
 ```
+On **Windows**, wrap with `cmd /c` (bare `npx` fails on the "C:\Program Files\nodejs" path):
+`"command": "cmd", "args": ["/c", "npx", "mcp-remote", "…/mcp", "--header", "Authorization: Bearer …"]`
 
 Then ask Claude Desktop: *"Draft a plan to launch a student discount."* → it calls **`check_conflict`**
 → surfaces **PRE-011** → adjusts the plan → **`propose_decision`** → a **Ratify card appears in Slack**
-for a human to approve. Approve it, and `get_decision` reflects the ratified ruling.
+(#all-lumina-labs) for a human to approve. Approve it, and `get_decision` reflects the ratified ruling.
 
-Health check: `GET /healthz` → `{"status":"ok"}` (no auth).
+Health check (no auth): `curl https://daring-rejoicing-production-01d2.up.railway.app/healthz` →
+`{"status":"ok","service":"precedent-mcp"}`. Unauthenticated tool calls return **401**.
 
 ## Notes
 - The drift hot path uses **local pgvector only** — never the RTS API (rate-limit safe).

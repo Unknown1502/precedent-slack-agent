@@ -135,9 +135,31 @@ curl https://daring-rejoicing-production-01d2.up.railway.app/healthz
 # {"status":"ok","service":"precedent-mcp"}   (tool calls require a bearer token; no auth → 401)
 ```
 
-Judge walkthrough (landmines, split-view prompts, Claude Desktop MCP config):
-[docs/JUDGE_ACCESS.md](docs/JUDGE_ACCESS.md) · Deploy runbook + real-world gotchas:
+Full judge walkthrough: [docs/JUDGE_ACCESS.md](docs/JUDGE_ACCESS.md) · Deploy runbook + gotchas:
 [docs/DEPLOY.md](docs/DEPLOY.md).
+
+## Try it yourself (judge sandbox)
+
+In the **Lumina Labs** workspace, type any of these as a normal message — a private, ephemeral ⚖️
+**drift card** fires within a few seconds, citing the ruling it conflicts with (zero shared keywords):
+
+| Message | Fires | Why it's hard |
+|---|---|---|
+| `for the notifications service let's just spin up MongoDB, faster for this shape of data` | **PRE-014** | MongoDB vs "Postgres" — no shared words |
+| `I'll add a 15% off banner for students on the landing page this week` | **PRE-011** | discount freeze until Q4 review |
+| `pushing the billing retry fix straight to prod tonight, it's tiny` | **PRE-013** | billing change with no feature flag |
+| `let's book a design sync Wednesday 3pm` | **PRE-016** | no-meeting Wednesdays |
+| `we can just pipe EU events into the US cluster for now` | **PRE-017** | EU data residency |
+| `launching the onboarding A/B today, will post results Friday` | **PRE-021** | unregistered A/B test |
+
+> Debounce by design: **one card per person per channel per ~2 min** — fire each landmine in a
+> *different* channel (`#eng-platform`, `#pricing`, `#growth`, …) or wait between them.
+
+Then: **📖 View ruling** → rationale, dissent, lineage, source permalinks · open the **⚖️ Canvas
+Decision Register** · ask the assistant split-view *"Why do we use Postgres for new services?"* · and
+from **Claude Desktop** (MCP config in [JUDGE_ACCESS.md](docs/JUDGE_ACCESS.md)) ask *"Draft a plan to
+launch a student discount"* → it calls `check_conflict`, surfaces **PRE-011**, and `propose_decision`
+posts a Ratify card back into Slack for a human to approve.
 
 ## Tests
 

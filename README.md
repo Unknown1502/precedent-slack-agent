@@ -12,7 +12,8 @@ Three pillars: **Remember** (manual + autonomous capture → human-ratified cano
 Two invariants hold everywhere: **(1)** nothing enters the canon as `ratified` without a human
 clicking **Approve**, and **(2)** the drift hot path uses **local pgvector only — never the
 Real-Time Search API**. The Slack surfaces and the MCP server call the *same* `canon` + `sentinel`
-code — one brain, two mouths.
+code — one brain, two mouths. Full component breakdown, data model, and request lifecycles:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ```mermaid
 flowchart TD

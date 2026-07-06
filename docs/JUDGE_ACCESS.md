@@ -27,7 +27,7 @@ AI agents consult it before acting.
    canon and the Register updates.
 
 ## Try it yourself — the 6 drift landmines
-Type any of these in **#all-lumina-labs** (as a human — bot messages are ignored):
+Type any of these as a normal message (bot messages are ignored):
 
 | # | Message | Fires |
 |---|---|---|
@@ -37,6 +37,11 @@ Type any of these in **#all-lumina-labs** (as a human — bot messages are ignor
 | L4 | `let's book a design sync Wednesday 3pm` | PRE-016 |
 | L5 | `we can just pipe EU events into the US cluster for now` | PRE-017 |
 | L6 | `launching the onboarding A/B today, will post results Friday` | PRE-021 |
+
+> **Anti-nag debounce (by design):** you get at most **one drift card per person per channel per
+> ~2 minutes** — a real product wouldn't spam its users. To fire several landmines back-to-back,
+> **use a different channel for each** (#eng-platform, #pricing, #growth, …) or wait 2 minutes
+> between them. Cards are **ephemeral**: only the person who typed the message sees the card.
 
 ## MCP quickstart (governance loop)
 The Precedent MCP server is **live** over Streamable HTTP with 4 tools: `search_decisions`,
@@ -71,6 +76,13 @@ Health check (no auth): `curl https://daring-rejoicing-production-01d2.up.railwa
 `{"status":"ok","service":"precedent-mcp"}`. Unauthenticated tool calls return **401**.
 
 ## Notes
-- The drift hot path uses **local pgvector only** — never the RTS API (rate-limit safe).
-- Nothing enters canon as `ratified` without a **human Approve** in Slack.
+- The drift hot path uses **local pgvector only** — never the RTS API (rate-limit safe by design).
+- RTS (`assistant.search.context`) powers Archivist evidence and `@precedent backfill`, budgeted to
+  ≤3 calls/inquiry with a fresh event `action_token`. Where the workspace/token doesn't provide
+  semantic search, Precedent **degrades gracefully to canon-only answers and logs the fallback** —
+  it never fails silently.
+- Nothing enters canon as `ratified` without a **human Approve** in Slack. The MCP `propose_decision`
+  tool can only ever create *proposed* rulings.
+- Hosting: Slack worker + MCP server on Railway (paid, monitored via `/healthz`), canon on Neon
+  Postgres + pgvector. Kept alive through the full judging window.
 - Contact for issues during judging: _(handle in Devpost submission)_.

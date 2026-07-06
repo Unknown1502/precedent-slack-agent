@@ -1,5 +1,24 @@
 # Deploy — Railway (app + MCP) + Neon (Postgres/pgvector)
 
+> **STATUS: DEPLOYED (Jul 6) and verified.**
+> - Slack worker: Railway service `precedent-slack-agent` (Socket Mode; drift card verified from cloud).
+> - MCP server: Railway service `daring-rejoicing` →
+>   `https://daring-rejoicing-production-01d2.up.railway.app` (healthz OK · no-auth 401 · 4 tools
+>   verified from a real MCP client against Neon).
+> - DB: Neon, full-fidelity copy of the demo canon. Railway auto-deploys on push to `main`.
+>
+> **Gotchas that actually bit us — check these first when something 502s/crash-loops:**
+> 1. Railway **stages** variable/settings edits — nothing applies until you click the purple
+>    **Apply changes / Deploy** button. "Deployment successful" can mean *build* success while the
+>    app crash-loops for missing env.
+> 2. Each service needs its **Custom Start Command** actually applied; otherwise it runs the image
+>    default (`precedent.slack.app`) and becomes a **duplicate Slack worker** that splits events.
+> 3. The MCP SDK's DNS-rebinding protection returns **421 Misdirected Request** behind a proxy
+>    host — handled in `mcp/server.py` (protection off unless `MCP_ALLOWED_HOSTS` is set; bearer
+>    auth remains the access control).
+> 4. Never run a local `python -m precedent.slack.app` while the Railway worker is up — two Socket
+>    Mode connections split events and it looks like the bot randomly ignores messages.
+
 Target: infra stays alive through judging (Jul 14 – Aug 6). Two Railway services from one repo/image,
 one Neon database. Slack side needs **no public URL** (Socket Mode); MCP needs public HTTPS.
 

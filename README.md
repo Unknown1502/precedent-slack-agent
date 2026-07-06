@@ -125,6 +125,20 @@ and drift defense there.
 | 7 | Seed world: 12 rulings + persona story arcs with real evidence permalinks; `/precedent backfill` + `@precedent backfill` archaeology (history scan, RTS-assisted when a token is present) | done |
 | 8 | Hardening: retries, idempotency, tests | done |
 
+## Live deployment
+
+Production runs as **two Railway services from the one Dockerfile** (Socket Mode worker + MCP
+server) against **Neon** Postgres+pgvector:
+
+```bash
+curl https://daring-rejoicing-production-01d2.up.railway.app/healthz
+# {"status":"ok","service":"precedent-mcp"}   (tool calls require a bearer token; no auth → 401)
+```
+
+Judge walkthrough (landmines, split-view prompts, Claude Desktop MCP config):
+[docs/JUDGE_ACCESS.md](docs/JUDGE_ACCESS.md) · Deploy runbook + real-world gotchas:
+[docs/DEPLOY.md](docs/DEPLOY.md).
+
 ## Tests
 
 ```bash

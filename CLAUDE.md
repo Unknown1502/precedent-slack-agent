@@ -76,8 +76,24 @@ Dev runs on **Groq** (LLM: `llama-3.3-70b-versatile` reason / `llama-3.1-8b-inst
   seed world arcs posted with real evidence permalinks (27 msgs, 7 personas, `scripts/seed/seed_world.py`)
   · F7 backfill built (`/precedent backfill` + `@precedent backfill`; extractor now includes bot_message
   personas — G4 filtering stays in the Gatekeeper only).
-- **Remaining (non-code):** deploy (Railway/Fly + Neon) · 3-min video · architecture diagram · Devpost
-  writeup · judge invites · RTS action_token live truth (needs one `@precedent` mention; degrades clean).
+
+## Production (deployed Jul 5–6; docs/DEPLOY.md is the runbook, updated with real gotchas)
+- **Railway, two services from one Dockerfile:** `precedent-slack-agent` (Socket Mode worker, default
+  CMD) + `daring-rejoicing` (MCP, start-command `python -m precedent.mcp.server`). Repo:
+  github.com/Unknown1502/precedent-slack-agent (branch `main` = deploy source; auto-deploys on push).
+- **MCP public URL:** `https://daring-rejoicing-production-01d2.up.railway.app/mcp` (healthz OK,
+  no-auth→401, all 4 tools verified from a real MCP client against prod). Prod bearer differs from dev.
+- **DB:** Neon Postgres+pgvector — full-fidelity copy of the local canon (12 rulings, embeddings,
+  evidence, enrollment). Drift verified from the cloud worker (L5→PRE-017, ~4s).
+- **Deploy gotchas (cost us hours — check these FIRST):** Railway stages variable/setting edits until
+  the purple **Apply/Deploy** button is clicked · each service needs its **Custom Start Command**
+  applied (else it runs the default CMD and becomes a duplicate Slack worker) · the MCP SDK's
+  DNS-rebinding protection 421s behind a proxy — fixed in `mcp/server.py` (off by default,
+  re-enable via `MCP_ALLOWED_HOSTS`) · `$PORT` is honored automatically.
+- **Local dev after cutover:** do NOT run `python -m precedent.slack.app` locally while the Railway
+  worker is up — two Socket Mode workers split events (looks like "randomly ignores messages").
+- **Remaining (all non-code):** 3-min video · Devpost submission · judge invites + fresh-account QA ·
+  RTS action_token live truth (one `@precedent` mention; degrades clean either way).
 
 ## Run
 `python -m precedent.db.migrate` · `python -m precedent.slack.app` (Socket Mode) · `python -m precedent.mcp.server` (:8933)

@@ -136,7 +136,24 @@ def register(app: App) -> None:
             say(text=f"{summary}\n_RTS: {note}_",
                 thread_ts=event.get("thread_ts") or event["ts"])
         else:
-            say(text="Hi! I capture decisions (react :scales: on a thread), defend the canon "
-                     "against drift, and answer questions in my split-view. Try "
-                     "`@precedent backfill` to mine this channel's history.",
-                thread_ts=event.get("thread_ts") or event["ts"])
+            # Archivist over @mention — a reliable, discoverable path to the cited Q&A
+            # (works regardless of the Slack assistant/split-view surface).
+            import re
+
+            from precedent.agents import archivist
+
+            thread = event.get("thread_ts") or event["ts"]
+            question = re.sub(r"<@[A-Z0-9]+>", "", event.get("text") or "").strip()
+            if not question or len(question) < 4:
+                say(text="Ask me what the team has decided and *why* — e.g. "
+                    "`@precedent why do we use Postgres for new services?` "
+                    "Or `@precedent backfill` to mine this channel's history.",
+                    thread_ts=thread)
+                return
+            try:
+                answer = "".join(archivist.answer_stream(question, client, action_token)).strip()
+            except Exception as e:  # noqa: BLE001
+                log.warning("mention.archivist_error", error=str(e)[:160])
+                answer = ""
+            say(text=answer or "I couldn't find anything relevant in the canon yet.", thread_ts=thread)
+            log.info("mention.archivist_answered", q=question[:60], chars=len(answer))
